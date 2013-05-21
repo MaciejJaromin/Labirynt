@@ -8,6 +8,8 @@
 #include <iostream>
 #include "main.h"
 #include "bullerbyn.h"
+#include "agents_maciej.h"
+#include "gather_team.h"
 
 using namespace std;
 
@@ -30,7 +32,7 @@ int main( int argc, char* args[] )
     //which agent moves now?
     int tura=0;
 
-    gather_team(agenci, 0);
+    gather_team(agenci, 1);
 
     char** decision;
 

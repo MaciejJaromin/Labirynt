@@ -508,6 +508,7 @@ void Dot::handle_input()
             case SDLK_DOWN: yVel += DOT_HEIGHT / 2; break;
             case SDLK_LEFT: xVel -= DOT_WIDTH / 2; break;
             case SDLK_RIGHT: xVel += DOT_WIDTH / 2; break;
+            default: break;
         }
     }
     //If a key was released
@@ -520,6 +521,7 @@ void Dot::handle_input()
             case SDLK_DOWN: yVel -= DOT_HEIGHT / 2; break;
             case SDLK_LEFT: xVel += DOT_WIDTH / 2; break;
             case SDLK_RIGHT: xVel -= DOT_WIDTH / 2; break;
+            default: break;
         }
     }
 }
@@ -541,6 +543,7 @@ void Dot::handle_movement(char option, Tile *tiles[])
             case '4': xVel = 4;
             ++xTile;
             break;
+            default: break;
     }
     if(yTile<2)
     {
