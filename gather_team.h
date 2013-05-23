@@ -3,6 +3,7 @@
 
 #include "bullerbyn.h"
 #include "agents_maciej.h"
+#include "agents_piotr.h"
 
 void gather_team(agents *agenci[AGENTS_AMOUNT], int option);
 
