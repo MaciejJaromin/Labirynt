@@ -5,7 +5,7 @@
 const int SCREEN_WIDTH = 800;
 const int SCREEN_HEIGHT = 600;
 const int SCREEN_BPP = 32;
-
+const int ZOOM=2;
 //The frame rate
 const int FRAMES_PER_SECOND = 20;
 
@@ -13,31 +13,32 @@ const int FRAMES_PER_SECOND = 20;
 const int DOT_WIDTH = 20;
 const int DOT_HEIGHT = 20;
 
-//The dimensions of the level
-const int LEVEL_WIDTH = 1280;
-const int LEVEL_HEIGHT = 960;
-
-const int LEVEL_H = LEVEL_HEIGHT/80;
-const int LEVEL_W = LEVEL_WIDTH/80;
-
 //Tile constants
-const int TILE_WIDTH = 80;
-const int TILE_HEIGHT = 80;
+const int TILE_WIDTH = 80/ZOOM;
+const int TILE_HEIGHT = 80/ZOOM;
 const int TOTAL_TILES = 192;
 const int TILE_SPRITES = 12;
 
+//The dimensions of the level
+const int LEVEL_WIDTH = 1280/ZOOM;
+const int LEVEL_HEIGHT = 960/ZOOM;
+
+const int LEVEL_H = LEVEL_HEIGHT/TILE_WIDTH;
+const int LEVEL_W = LEVEL_WIDTH/TILE_HEIGHT;
+
+
 //The different tile sprites
-const int TILE_RED = 0;
+const int TILE_RED = 0; //unvisited tile
 const int TILE_GREEN = 1;
-const int TILE_BLUE = 2;
-const int TILE_CENTER = 3;
+const int TILE_BLUE = 2; // single treasure tile
+const int TILE_CENTER = 3; // wall tile
 const int TILE_TOP = 4;
 const int TILE_TOPRIGHT = 5;
 const int TILE_RIGHT = 6;
 const int TILE_BOTTOMRIGHT = 7;
 const int TILE_BOTTOM = 8;
 const int TILE_BOTTOMLEFT = 9;
-const int TILE_LEFT = 10;
+const int TILE_LEFT = 10; //writings
 const int TILE_TOPLEFT = 11;
 
 //The surfaces
@@ -73,6 +74,7 @@ class Tile
 
     //Get the tile type
     int get_type();
+    void change_type(int);
 
     //Get the collision box
     SDL_Rect get_box();
@@ -96,7 +98,7 @@ class Dot
     //Takes key presses and adjusts the dot's velocity
     void handle_input();
 
-    void handle_movement(char option, Tile *tiles[]);
+    void handle_movement(char option, int items[3][3]);
 
     //Moves the dot
     void move( Tile *tiles[] );
@@ -303,57 +305,57 @@ void clip_tiles()
     clips[ TILE_RED ].h = TILE_HEIGHT;
 
     clips[ TILE_GREEN ].x = 0;
-    clips[ TILE_GREEN ].y = 80;
+    clips[ TILE_GREEN ].y = 40;
     clips[ TILE_GREEN ].w = TILE_WIDTH;
     clips[ TILE_GREEN ].h = TILE_HEIGHT;
 
     clips[ TILE_BLUE ].x = 0;
-    clips[ TILE_BLUE ].y = 160;
+    clips[ TILE_BLUE ].y = 80;
     clips[ TILE_BLUE ].w = TILE_WIDTH;
     clips[ TILE_BLUE ].h = TILE_HEIGHT;
 
-    clips[ TILE_TOPLEFT ].x = 80;
+    clips[ TILE_TOPLEFT ].x = 40;
     clips[ TILE_TOPLEFT ].y = 0;
     clips[ TILE_TOPLEFT ].w = TILE_WIDTH;
     clips[ TILE_TOPLEFT ].h = TILE_HEIGHT;
 
-    clips[ TILE_LEFT ].x = 80;
-    clips[ TILE_LEFT ].y = 80;
+    clips[ TILE_LEFT ].x = 40;
+    clips[ TILE_LEFT ].y = 40;
     clips[ TILE_LEFT ].w = TILE_WIDTH;
     clips[ TILE_LEFT ].h = TILE_HEIGHT;
 
-    clips[ TILE_BOTTOMLEFT ].x = 80;
-    clips[ TILE_BOTTOMLEFT ].y = 160;
+    clips[ TILE_BOTTOMLEFT ].x = 40;
+    clips[ TILE_BOTTOMLEFT ].y = 80;
     clips[ TILE_BOTTOMLEFT ].w = TILE_WIDTH;
     clips[ TILE_BOTTOMLEFT ].h = TILE_HEIGHT;
 
-    clips[ TILE_TOP ].x = 160;
+    clips[ TILE_TOP ].x = 80;
     clips[ TILE_TOP ].y = 0;
     clips[ TILE_TOP ].w = TILE_WIDTH;
     clips[ TILE_TOP ].h = TILE_HEIGHT;
 
-    clips[ TILE_CENTER ].x = 160;
-    clips[ TILE_CENTER ].y = 80;
+    clips[ TILE_CENTER ].x = 80;
+    clips[ TILE_CENTER ].y = 40;
     clips[ TILE_CENTER ].w = TILE_WIDTH;
     clips[ TILE_CENTER ].h = TILE_HEIGHT;
 
-    clips[ TILE_BOTTOM ].x = 160;
-    clips[ TILE_BOTTOM ].y = 160;
+    clips[ TILE_BOTTOM ].x = 80;
+    clips[ TILE_BOTTOM ].y = 80;
     clips[ TILE_BOTTOM ].w = TILE_WIDTH;
     clips[ TILE_BOTTOM ].h = TILE_HEIGHT;
 
-    clips[ TILE_TOPRIGHT ].x = 240;
+    clips[ TILE_TOPRIGHT ].x = 120;
     clips[ TILE_TOPRIGHT ].y = 0;
     clips[ TILE_TOPRIGHT ].w = TILE_WIDTH;
     clips[ TILE_TOPRIGHT ].h = TILE_HEIGHT;
 
-    clips[ TILE_RIGHT ].x = 240;
-    clips[ TILE_RIGHT ].y = 80;
+    clips[ TILE_RIGHT ].x = 120;
+    clips[ TILE_RIGHT ].y = 40;
     clips[ TILE_RIGHT ].w = TILE_WIDTH;
     clips[ TILE_RIGHT ].h = TILE_HEIGHT;
 
-    clips[ TILE_BOTTOMRIGHT ].x = 240;
-    clips[ TILE_BOTTOMRIGHT ].y = 160;
+    clips[ TILE_BOTTOMRIGHT ].x = 120;
+    clips[ TILE_BOTTOMRIGHT ].y = 80;
     clips[ TILE_BOTTOMRIGHT ].w = TILE_WIDTH;
     clips[ TILE_BOTTOMRIGHT ].h = TILE_HEIGHT;
 }
@@ -431,7 +433,7 @@ bool touches_wall( SDL_Rect box, Tile *tiles[] )
     for( int t = 0; t < TOTAL_TILES; t++ )
     {
         //If the tile is a wall type tile
-        if( ( tiles[ t ]->get_type() >= TILE_CENTER ) && ( tiles[ t ]->get_type() <= TILE_TOPLEFT ) )
+        if( tiles[ t ]->get_type() ==3 )
         {
             //If the collision box touches the wall tile
             if( check_collision( box, tiles[ t ]->get_box() ) == true )
@@ -473,6 +475,21 @@ int Tile::get_type()
 {
     return type;
 }
+void Tile::change_type(int option)
+{
+    if(option==2) //visit
+    {
+        this->type= 1;
+    }
+    if(option==0) //write sth
+    {
+        this->type = 10;
+    }
+    if(option==1) //write nothing
+    {
+        this->type=1;
+    }
+}
 
 SDL_Rect Tile::get_box()
 {
@@ -484,8 +501,8 @@ Dot::Dot()
     //Initialize the offsets
     xTile=2;
     yTile=6;
-    box.x = (xTile-1)*80+30;
-    box.y = (yTile-1)*80+30;
+    box.x = (xTile-1)*TILE_WIDTH+(TILE_WIDTH-20)/2;
+    box.y = (yTile-1)*TILE_HEIGHT+(TILE_HEIGHT-20)/2;
     box.w = DOT_WIDTH;
     box.h = DOT_HEIGHT;
     xTile=2;
@@ -523,23 +540,39 @@ void Dot::handle_input()
         }
     }
 }
-void Dot::handle_movement(char option, Tile *tiles[])
+void Dot::handle_movement(char option, int items[3][3])
 {
     xVel=0;
     yVel=0;
     switch (option)
     {
-            case '1': yVel = -4;
-            --yTile;
+            case 1:
+            if(items[0][1]!=3)
+            {
+                yVel = -TILE_WIDTH/20;
+                --yTile;
+            }
             break;
-            case '2': yVel = 4;
-            ++yTile;
+            case 2:
+            if(items[2][1]!=3)
+            {
+                yVel = TILE_WIDTH/20;
+                ++yTile;
+            }
             break;
-            case '3': xVel = -4;
-            --xTile;
+            case 3:
+            if(items[1][0]!=3)
+            {
+                xVel = -TILE_WIDTH/20;
+                --xTile;
+            }
             break;
-            case '4': xVel = 4;
-            ++xTile;
+            case 4:
+            if(items[1][2]!=3)
+            {
+                xVel = TILE_WIDTH/20;
+                ++xTile;
+            }
             break;
     }
     if(yTile<2)
