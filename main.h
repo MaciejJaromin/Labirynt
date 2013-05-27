@@ -29,7 +29,7 @@ const int LEVEL_W = LEVEL_WIDTH/TILE_HEIGHT;
 
 //The different tile sprites
 const int TILE_RED = 0; //unvisited tile
-const int TILE_GREEN = 1;
+const int TILE_GREEN = 1; // vicited tile
 const int TILE_BLUE = 2; // single treasure tile
 const int TILE_CENTER = 3; // wall tile
 const int TILE_TOP = 4;

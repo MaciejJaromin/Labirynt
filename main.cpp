@@ -40,7 +40,7 @@ int main( int argc, char* args[] )
     //which agent moves now?
     int tura=0;
 
-    gather_team(agenci, 2);
+    gather_team(agenci, 0);
 
     pair<int, char*> decision;
 
@@ -118,7 +118,7 @@ int main( int argc, char* args[] )
             {
                 for(int i2=0; i<3; ++i)
                 {
-                    if(items[i][i2]==10)
+                    if(items[i][i2]==1)
                         items[i][i2]==0;
                 }
             }
