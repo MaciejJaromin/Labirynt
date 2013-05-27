@@ -8,7 +8,10 @@
 #include <vector>
 #include <cstring>
 #include <iostream>
+<<<<<<< HEAD
 #include <utility>
+=======
+>>>>>>> b5fb966b2946302bc8093b1ec2d5df0c668d3b9d
 
 const int AGENTS_AMOUNT = 2;
 

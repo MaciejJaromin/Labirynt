@@ -1,5 +1,5 @@
 #include "agents_maciej.h"
-/*
+
 solo_straight::solo_straight()
 {
     data_int[0] = 4;
@@ -7,7 +7,6 @@ solo_straight::solo_straight()
 
 char** solo_straight::move(int items[3][3],int mates[3][3],char reading[3][3][40])
 {
-    char** decision = (char**) malloc(sizeof(char)*41);
 
     /* decision[0] - what action will agent take
     1 - move up
@@ -17,7 +16,9 @@ char** solo_straight::move(int items[3][3],int mates[3][3],char reading[3][3][40
 
     0 - writing if(decision[1]!="") and nothing otherwise
     */
-/*
+
+
+
     int direction = data_int[0]; //load the last choice made
     if (direction == 1)
     {
@@ -78,7 +79,6 @@ solo_leftwall::solo_leftwall()
 
 char** solo_leftwall::move(int items[3][3],int mates[3][3],char reading[3][3][40])
 {
-    char** decision = (char**) malloc(sizeof(char)*41);
 
     /* decision[0] - what action will agent take
     1 - move up
@@ -88,7 +88,10 @@ char** solo_leftwall::move(int items[3][3],int mates[3][3],char reading[3][3][40
 
     0 - writing if(decision[1]!="") and nothing otherwise
     */
-/*
+
+
+
+
     int direction = data_int[0]; //load the last choice made
     if (direction == 1)
     {
@@ -187,4 +190,3 @@ char** solo_leftwall::move(int items[3][3],int mates[3][3],char reading[3][3][40
     return decision;
 
 }
-*/

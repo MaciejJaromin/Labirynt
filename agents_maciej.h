@@ -1,4 +1,5 @@
-/*#ifndef AGENTS_MACIEJ_H_INCLUDED
+#ifndef AGENTS_MACIEJ_H_INCLUDED
+#ifndef AGENTS_MACIEJ_H_INCLUDED
 #define AGENTS_MACIEJ_H_INCLUDED
 
 
@@ -13,6 +14,7 @@ class maciej_base : public agents
     public:
 
     //function making decisions - what to do
+
     virtual char** move(int items[3][3],int mates[3][3],char reading[3][3][40]) = 0;
 };
 
@@ -20,15 +22,18 @@ class solo_straight : public maciej_base
 {
 public:
     solo_straight();
+
     char** move(int items[3][3],int mates[3][3],char reading[3][3][40]);
+
+
 };
 
 class solo_leftwall : public maciej_base
 {
 public:
     solo_leftwall();
+
     char** move(int items[3][3],int mates[3][3],char reading[3][3][40]);
 };
 
 #endif // AGENTS_MACIEJ_H_INCLUDED
-*/

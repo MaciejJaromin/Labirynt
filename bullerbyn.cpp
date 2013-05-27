@@ -7,6 +7,7 @@ std::pair<int, char*> bullerbyn1::move(int items[3][3],int mates[AGENTS_AMOUNT],
 {
     std::pair<int, char*> decision;
 
+
     /* decision[0] - what action will agent take
     1 - move up
     2 - move down
@@ -17,6 +18,7 @@ std::pair<int, char*> bullerbyn1::move(int items[3][3],int mates[AGENTS_AMOUNT],
     */
 
     //setting "stupid" decision
+
     decision.first=0;
     decision.second="juhu1";
 
@@ -30,6 +32,7 @@ std::pair<int, char*> bullerbyn2::move(int items[3][3],int mates[AGENTS_AMOUNT],
     std::pair<int, char*> decision;
     decision.first=4;
     decision.second="juhu2";
+
     return decision;
 }
 

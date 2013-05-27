@@ -10,6 +10,7 @@
 #include "main.h"
 #include "bullerbyn.h"
 #include "agents_maciej.h"
+#include "agents_piotr.h"
 #include "gather_team.h"
 
 using namespace std;
@@ -39,7 +40,7 @@ int main( int argc, char* args[] )
     //which agent moves now?
     int tura=0;
 
-    gather_team(agenci, 0);
+    gather_team(agenci, 2);
 
     pair<int, char*> decision;
 
