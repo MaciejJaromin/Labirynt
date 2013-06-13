@@ -11,7 +11,7 @@ void gather_team(agents *agenci[AGENTS_AMOUNT], int option)
     }
     else if (option == 1)
     {
-        agenci[0] = new solo_straight(0);//straight;
+        agenci[0] = new writer(0);//straight;
         agenci[1] = new solo_leftwall(1);
     }
 /*    else if (option == 2)

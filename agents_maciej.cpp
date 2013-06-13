@@ -138,7 +138,7 @@ std::pair<int, char*> writer::move(int items[3][3],int mates[20],char reading[3]
 
     if (state == 0)
     {
-        state = 1;
+        //state = 1;
         decision.first = direction;
         decision.second = "";
         return decision;
@@ -186,49 +186,74 @@ std::pair<int, char*> writer::move(int items[3][3],int mates[20],char reading[3]
         }
         else
         {
-            /*int previous_dir = direction;
+            int previous_dir = direction;
             int came_from = previous_dir - 1 + (previous_dir % 2);
 
             int dir_priorities[5];
             for (int i = 0; i < 5; i++)
-                dir_priorities[i] = 3;
+                dir_priorities[i] = 0;
 
             //walls
             if (items[0][1] == M_WALL)
-                dir_priorities[1] = -100;
+                dir_priorities[1] = -1;
             else if (items[2][1] == M_WALL)
-                dir_priorities[2] = -100;
+                dir_priorities[2] = -1;
             else if (items[1][0] == M_WALL)
-                dir_priorities[3] = -100;
+                dir_priorities[3] = -1;
             else if (items[1][2] == M_WALL)
-                dir_priorities[4] = -100;
+                dir_priorities[4] = -1;
 
             //analyze writing
             std::string msg = reading[1][1];
-            for (int i = 0; i < msg.length - 2; i += 3)
+            bool loop = false;
+
+            for (int i = 0; i < msg.length() - 2; i += 3)
             {
-                //loop?
-                if (msg[i] == id && msg[i+2] != came_from)
-                {
-                    msg.push_back(id);
-                    msg.push_back(msg[i+1]);
-                    msg.push_back(came_from);
-                    msg.push_back(id);
-                    msg.push_back(came_from);
-                    msg.push_back(msg[i+1]);
-                    direction = came_from;
-                    state = 0;
-                    decision.first = 0;
-                    decision.second = msg;
-                    return decision;
-                }
-                else
-                {
-                    if dir_priorities[msg[i+1]
-                }
+/*
+                if (msg[i] == id)
+                    loop = true;//(msg[i+2] != came_from);
+
+                int from = msg[i+1];
+                int to = msg[i+2];
+
+                if (dir_priorities[from] == 0)
+                    dir_priorities[from] = 2;
+                else if (dir_priorities[from] == 1)
+                    dir_priorities[from] = 3;
+
+                if (dir_priorities[to] == 0)
+                    dir_priorities[to] = 1;
+                else if (dir_priorities[to] == 2)
+                    dir_priorities[to] = 3;*/
             }
 
-            dir_priorities[came_from] -= 10;*/
+
+            if (loop)
+            {
+                msg.push_back(id);
+                msg.push_back(came_from);
+                msg.push_back(came_from);
+                direction = came_from;
+            }
+            else
+            {
+                for (int i = 3; i >= 0; i--)
+                {
+                    for (int j = 1; j < 5; j++)
+                    {
+                        if (dir_priorities[j] == i)
+                            direction = j;
+                    }
+                }
+
+                msg.push_back(id);
+                msg.push_back(came_from);
+                msg.push_back(direction);
+            }
+            state = 0;
+            decision.first = 0;
+            //std::strcpy (decision.second, msg.c_str());
+            return decision;
 
             //I hate parsing strings for info
 
