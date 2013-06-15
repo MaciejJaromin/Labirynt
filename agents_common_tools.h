@@ -1,6 +1,11 @@
 #ifndef AGENTS_COMMON_TOOLS_H_INCLUDED
 #define AGENTS_COMMON_TOOLS_H_INCLUDED
 
+int rotate_direction_clockwise(int direction, int rotation_clockwise);
+inline int rotate_direction_counterclockwise(int direction, int rotation_counterclockwise)
+{
+    return rotate_direction_clockwise(direction,-rotation_counterclockwise);
+}
 int rotate_direction_clockwise(int direction);
 int rotate_direction_counterclockwise(int direction);
 

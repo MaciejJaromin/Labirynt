@@ -15,10 +15,11 @@
 
 using namespace std;
 
+//storing "floor writing"
+char writings[LEVEL_W][LEVEL_H][40];
+
 int main( int argc, char* args[] )
 {
-    //storing "floor writing"
-    char writings[LEVEL_W][LEVEL_H][40];
 
     agents *agenci[AGENTS_AMOUNT];
 
@@ -40,7 +41,7 @@ int main( int argc, char* args[] )
     //which agent moves now?
     int tura=0;
 
-    gather_team(agenci, 0);
+    gather_team(agenci, 3);
 
     pair<int, char*> decision;
 
@@ -114,28 +115,12 @@ int main( int argc, char* args[] )
             items[2][1] = tiles[ (dots[tura].yTile) * LEVEL_W + dots[tura].xTile-1 ]->get_type();
             items[2][2] = tiles[ (dots[tura].yTile) * LEVEL_W + dots[tura].xTile ]->get_type();
 
-            for(int i=0; i<3; ++i)
-            {
-                for(int i2=0; i<3; ++i)
-                {
-                    if(items[i][i2]==1)
-                        items[i][i2]==0;
-                }
-            }
-
             //cutting writings from whole map to agent 3x3 surronding
 
-            *reading[0][0] = *writings[dots[tura].yTile-2][dots[tura].xTile-2];
-            *reading[0][1] = *writings[dots[tura].yTile-2][dots[tura].xTile-1];
-            *reading[0][2] = *writings[dots[tura].yTile-2][dots[tura].xTile];
-
-            *reading[1][0] = *writings[dots[tura].yTile-1][dots[tura].xTile-2];
-            *reading[1][1] = *writings[dots[tura].yTile-1][dots[tura].xTile-1];
-            *reading[1][2] = *writings[dots[tura].yTile-1][dots[tura].xTile];
-
-            *reading[2][0] = *writings[dots[tura].yTile][dots[tura].xTile-2];
-            *reading[2][1] = *writings[dots[tura].yTile][dots[tura].xTile-1];
-            *reading[2][2] = *writings[dots[tura].yTile][dots[tura].xTile];
+            for(int i=0;i<3;++i)
+                for(int j=0;j<3;++j)
+                    for(int k=0; k<sizeof(reading[0][0])/sizeof(reading[0][0][0]); ++k)
+                        reading[i][j][k] = writings[dots[tura].yTile-2+i][dots[tura].xTile-2+j][k];
 
             //geting mates
             int h1,h2;
@@ -160,14 +145,14 @@ int main( int argc, char* args[] )
             //if writing
             if(decision.first==0)
             {
-                *writings[dots[tura].yTile-1][dots[tura].xTile-1]= *decision.second;
+                memcpy(writings[dots[tura].yTile-1][dots[tura].xTile-1], decision.second, sizeof(writings[0][0])/sizeof(writings[0][0][0]) );
             }
 
             int help=tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->get_type();
 
             if (decision.first>0 && (help==0 || help==2))
                 decision.first=2;
-            if (decision.first==0 && decision.second == "")
+            if (decision.first==0 && *decision.second == NULL)
                 decision.first=1;
 
             tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->change_type(decision.first);

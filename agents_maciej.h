@@ -13,9 +13,10 @@ class maciej_base : public agents
 {
     public:
 
-    int & direction = data_int[0];
-    int & state = data_int[1];
-
+    int & direction;
+    int & state;
+    maciej_base():direction(data_int[0]),state(data_int[1])
+    {}
     //function making decisions - what to do
 
     virtual std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]) = 0;

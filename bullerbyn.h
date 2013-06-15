@@ -26,6 +26,7 @@ class agents
 
     public:
     agents(){};
+    agents(int id):id(id){};
 
     virtual std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]) = 0;
 

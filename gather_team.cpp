@@ -14,11 +14,16 @@ void gather_team(agents *agenci[AGENTS_AMOUNT], int option)
         agenci[0] = new writer(0);//straight;
         agenci[1] = new solo_leftwall(1);
     }
-/*    else if (option == 2)
+    else if (option == 2)
     {
         agenci[0] = new random_walker;
         agenci[1] = new random_walker;
 
     }
-    */
+      else if (option == 3)
+    {
+        agenci[0] = new sealing_random_walker(0);
+        agenci[1] = new sealing_random_walker(1);
+
+    }
 }

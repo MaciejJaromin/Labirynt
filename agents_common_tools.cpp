@@ -1,5 +1,27 @@
 #include "agents_common_tools.h"
 #include <cassert>
+
+int rotate_direction_clockwise(int direction, int rotation_clockwise)
+{
+    if(rotation_clockwise>0)
+    {
+        rotation_clockwise %= 4;
+        int new_direction = direction;
+        for(int i=0;i<rotation_clockwise;++i)
+            new_direction = rotate_direction_clockwise(new_direction);
+        return new_direction;
+    }
+    else if(rotation_clockwise<0)
+    {
+        int rotation_counterclockwise = -rotation_clockwise;
+        rotation_counterclockwise %= 4;
+        int new_direction = direction;
+        for(int i=0;i<rotation_counterclockwise;++i)
+            new_direction = rotate_direction_counterclockwise(new_direction);
+        return new_direction;
+    }
+}
+
 int rotate_direction_clockwise(int direction)
 {
     /*
