@@ -19,7 +19,7 @@ class maciej_base : public agents
     {}
     //function making decisions - what to do
 
-    virtual std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]) = 0;
+    virtual std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]) = 0;
 };
 
 class solo_straight : public maciej_base
@@ -27,7 +27,7 @@ class solo_straight : public maciej_base
 public:
     solo_straight(int give_id);
 
-    std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]);
+    std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]);
 
 
 };
@@ -37,7 +37,7 @@ class solo_leftwall : public maciej_base
 public:
     solo_leftwall(int give_id);
 
-    std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]);
+    std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]);
 };
 
 class writer : public maciej_base
@@ -47,7 +47,7 @@ public:
 
 
 
-    std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]);
+    std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]);
 };
 
 #endif // AGENTS_MACIEJ_H_INCLUDED

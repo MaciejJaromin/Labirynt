@@ -20,6 +20,8 @@ int rotate_direction_clockwise(int direction, int rotation_clockwise)
             new_direction = rotate_direction_counterclockwise(new_direction);
         return new_direction;
     }
+    else
+        return direction;
 }
 
 int rotate_direction_clockwise(int direction)

@@ -28,7 +28,7 @@ class agents
     agents(){};
     agents(int id):id(id){};
 
-    virtual std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]) = 0;
+    virtual std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]) = 0;
 
     //setting agents picture - don't work now
     char image[10];
@@ -47,7 +47,7 @@ class bullerbyn1 : public agents
     }
 
     //function making decisions - what to do
-    std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]);
+    std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]);
 };
 
 class bullerbyn2 : public agents
@@ -57,7 +57,7 @@ class bullerbyn2 : public agents
     {
     id=give_id;
     }
-    std::pair<int, char*> move(int items[3][3],int mates[20],char reading[3][3][40]);
+    std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]);
 };
 
 

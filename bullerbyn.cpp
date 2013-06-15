@@ -3,9 +3,9 @@
 //first type of agent - moving down
 
 
-std::pair<int, char*> bullerbyn1::move(int items[3][3],int mates[AGENTS_AMOUNT],char reading[3][3][40])
+std::pair<int, std::string> bullerbyn1::move(int items[3][3],int mates[AGENTS_AMOUNT],std::string reading[3][3])
 {
-    std::pair<int, char*> decision;
+    std::pair<int, std::string> decision;
 
 
     /* decision[0] - what action will agent take
@@ -27,9 +27,9 @@ std::pair<int, char*> bullerbyn1::move(int items[3][3],int mates[AGENTS_AMOUNT],
 }
 
 //first type of agent - moving right
-std::pair<int, char*> bullerbyn2::move(int items[3][3],int mates[AGENTS_AMOUNT],char reading[3][3][40])
+std::pair<int, std::string> bullerbyn2::move(int items[3][3],int mates[AGENTS_AMOUNT],std::string reading[3][3])
 {
-    std::pair<int, char*> decision;
+    std::pair<int, std::string> decision;
     decision.first=4;
     decision.second="juhu2";
 

@@ -16,7 +16,7 @@
 using namespace std;
 
 //storing "floor writing"
-char writings[LEVEL_W][LEVEL_H][40];
+std::string writings[LEVEL_W][LEVEL_H];
 
 int main( int argc, char* args[] )
 {
@@ -36,14 +36,14 @@ int main( int argc, char* args[] )
        7 8 9
        0-not near to you
        */
-    char reading[3][3][40];
+    std::string reading[3][3];
 
     //which agent moves now?
     int tura=0;
 
     gather_team(agenci, 3);
 
-    pair<int, char*> decision;
+    pair<int, std::string> decision;
 
 
     //Quit flag
@@ -119,8 +119,7 @@ int main( int argc, char* args[] )
 
             for(int i=0;i<3;++i)
                 for(int j=0;j<3;++j)
-                    for(int k=0; k<sizeof(reading[0][0])/sizeof(reading[0][0][0]); ++k)
-                        reading[i][j][k] = writings[dots[tura].yTile-2+i][dots[tura].xTile-2+j][k];
+                    reading[i][j] = writings[dots[tura].yTile-2+i][dots[tura].xTile-2+j];
 
             //geting mates
             int h1,h2;
@@ -145,14 +144,14 @@ int main( int argc, char* args[] )
             //if writing
             if(decision.first==0)
             {
-                memcpy(writings[dots[tura].yTile-1][dots[tura].xTile-1], decision.second, sizeof(writings[0][0])/sizeof(writings[0][0][0]) );
+                writings[dots[tura].yTile-1][dots[tura].xTile-1] = decision.second;
             }
 
             int help=tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->get_type();
 
             if (decision.first>0 && (help==0 || help==2))
                 decision.first=2;
-            if (decision.first==0 && *decision.second == NULL)
+            if (decision.first==0 && decision.second == "")
                 decision.first=1;
 
             tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->change_type(decision.first);

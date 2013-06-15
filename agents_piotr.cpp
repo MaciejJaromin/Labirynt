@@ -7,13 +7,13 @@ random_walker::random_walker()
     srand(time(NULL));
 }
 
-std::pair<int, char*> random_walker::move(int items[3][3], int mates[20], char reading[3][3][40])
+std::pair<int, std::string> random_walker::move(int items[3][3], int mates[20], std::string reading[3][3])
 {
     int direction = data_int[0]; //load the last choice made
 
     // Set up a reference frame (such that we are facing north)
     rotated_view_of_square_matrix<int,3> rotated_items(items);
-    rotated_view_of_square_matrix<char[40],3> rotated_reading(reading);
+    rotated_view_of_square_matrix<std::string,3> rotated_reading(reading);
     int clockwise_rotation=0;
     while(direction!=1)
     {
@@ -47,7 +47,7 @@ std::pair<int, char*> random_walker::move(int items[3][3], int mates[20], char r
         final_decision = rotate_direction_counterclockwise(final_decision);
     //
     data_int[0] = final_decision;
-    return std::make_pair<int,char*>(final_decision,"");
+    return std::make_pair<int,std::string>(final_decision,"");
 }
 
 sealing_random_walker::sealing_random_walker(int id):agents(id)
@@ -57,8 +57,10 @@ sealing_random_walker::sealing_random_walker(int id):agents(id)
     srand(time(NULL));
 }
 
-bool is_dead_end_sign(char reading[40])
+bool is_dead_end_sign(std::string reading)
 {
+    if(reading.length()<5)
+        return false;
     if(reading[0]=='d')
     {
         for(int i=1;i<=4;++i)
@@ -69,38 +71,37 @@ bool is_dead_end_sign(char reading[40])
     else
         return false;
 }
-bool is_dead_end(char reading[40], int direction)
+bool is_dead_end(std::string reading, int direction)
 {
     if(!is_dead_end_sign(reading))
         return false;
     else
         return reading[direction]=='1';
 }
-char* append_dead_end_sign(char reading[40], int direction)
+std::string append_dead_end_sign(std::string reading, int direction)
 {
-    char* ret = new char[40];
     if(is_dead_end_sign(reading))
     {
-        memcpy(ret,reading,5);
-        ret[5] = NULL;
+        reading[direction] = '1';
+        return reading;
     }
     else
     {
-        memcpy(ret,"d0000",6);
+        std::string ret = "d0000";
+        ret[direction] = '1';
+        return ret;
     }
-    ret[direction]='1';
-    return ret;
 }
 
-std::pair<int, char*> sealing_random_walker::move(int items[3][3], int mates[20], char reading[3][3][40])
+std::pair<int, std::string> sealing_random_walker::move(int items[3][3], int mates[20], std::string reading[3][3])
 {
     int& direction = data_int[0];
     int& dead_end = data_int[1];
-    char* writing = "";
+    std::string writing;
 
     // Set up a reference frame (such that we are facing north)
     rotated_view_of_square_matrix<int,3> rotated_items(items);
-    rotated_view_of_square_matrix<char[40],3> rotated_reading(reading);
+    rotated_view_of_square_matrix<std::string,3> rotated_reading(reading);
     int clockwise_rotation=0;
     while(direction!=1)
     {
@@ -148,10 +149,10 @@ std::pair<int, char*> sealing_random_walker::move(int items[3][3], int mates[20]
         final_decision = rotate_direction_counterclockwise(final_decision);
     //
     direction = final_decision;
-    if(writing[0]!=NULL)
+    if(writing!="")
         final_decision = 0;
     std::cout << id << "-" << dead_end << ":" << writing << "=" << reading[1][1] << std::endl;
-    return std::make_pair<int,char*>(final_decision,writing);
+    return std::make_pair<int,std::string>(final_decision,writing);
 }
 
 refactored_solo_leftwall::refactored_solo_leftwall()
@@ -159,13 +160,13 @@ refactored_solo_leftwall::refactored_solo_leftwall()
     data_int[0] = 1;
     srand(time(NULL));
 }
-std::pair<int, char*> refactored_solo_leftwall::move(int items[3][3], int mates[20], char reading[3][3][40])
+std::pair<int, std::string> refactored_solo_leftwall::move(int items[3][3], int mates[20], std::string reading[3][3])
 {
     int direction = data_int[0]; //load the last choice made
 
     // Set up a reference frame (such that we are facing north)
     rotated_view_of_square_matrix<int,3> rotated_items(items);
-    rotated_view_of_square_matrix<char[40],3> rotated_reading(reading);
+    rotated_view_of_square_matrix<std::string,3> rotated_reading(reading);
     int clockwise_rotation=0;
     while(direction!=1)
     {
@@ -198,7 +199,7 @@ std::pair<int, char*> refactored_solo_leftwall::move(int items[3][3], int mates[
 
     //
     data_int[0] = final_decision;
-    return std::make_pair<int,char*>(final_decision,"");
+    return std::make_pair<int,std::string>(final_decision,"");
 
 }
 

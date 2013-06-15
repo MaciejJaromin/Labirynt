@@ -38,7 +38,6 @@
 		</Linker>
 		<Unit filename="agents_common_tools.cpp" />
 		<Unit filename="agents_common_tools.h" />
-		<Unit filename="agents_maciej.cpp" />
 		<Unit filename="agents_maciej.h" />
 		<Unit filename="agents_piotr.cpp" />
 		<Unit filename="agents_piotr.h" />

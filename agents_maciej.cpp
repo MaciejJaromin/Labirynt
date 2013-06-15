@@ -5,7 +5,7 @@ solo_straight::solo_straight(int give_id)
     id = give_id;
 }
 
-std::pair<int, char*> solo_straight::move (int items[3][3],int mates[20],char reading[3][3][40])
+std::pair<int, std::string> solo_straight::move (int items[3][3],int mates[20],std::string reading[3][3])
 {
 
     /* decision - what action will agent take
@@ -28,7 +28,7 @@ std::pair<int, char*> solo_straight::move (int items[3][3],int mates[20],char re
         direction = 2;
 
     //and returning it
-    std::pair<int, char*> decision;
+    std::pair<int, std::string> decision;
     decision.first = direction;
     decision.second = "";
     return decision;
@@ -43,7 +43,7 @@ solo_leftwall::solo_leftwall(int give_id)
     direction = 1;
 }
 
-std::pair<int, char*> solo_leftwall::move(int items[3][3],int mates[20],char reading[3][3][40])
+std::pair<int, std::string> solo_leftwall::move(int items[3][3],int mates[20],std::string reading[3][3])
 {
 
     /* decision[0] - what action will agent take
@@ -105,7 +105,7 @@ std::pair<int, char*> solo_leftwall::move(int items[3][3],int mates[20],char rea
     }
 
     //and returning it
-    std::pair<int, char*> decision;
+    std::pair<int, std::string> decision;
     decision.first = direction;
     decision.second = "";
     return decision;
@@ -120,7 +120,7 @@ writer::writer(int give_id)
     state = 1;
 }
 
-std::pair<int, char*> writer::move(int items[3][3],int mates[20],char reading[3][3][40])
+std::pair<int, std::string> writer::move(int items[3][3],int mates[20],std::string reading[3][3])
 {
 
     /* decision - what action will agent take
@@ -132,7 +132,7 @@ std::pair<int, char*> writer::move(int items[3][3],int mates[20],char reading[3]
     0 - writing
     */
 
-    std::pair<int, char*> decision;
+    std::pair<int, std::string> decision;
     decision.first = 0;
     decision.second = "";
 
