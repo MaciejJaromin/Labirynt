@@ -28,17 +28,17 @@ const int LEVEL_W = LEVEL_WIDTH/TILE_HEIGHT;
 
 
 //The different tile sprites
-const int TILE_RED = 0; //unvisited tile
-const int TILE_GREEN = 1; // vicited tile
-const int TILE_BLUE = 2; // single treasure tile
-const int TILE_CENTER = 3; // wall tile
+const int TILE_UNVISITED = 0;
+const int TILE_VISITED = 1;
+const int TILE_TREASURE = 2;
+const int TILE_WALL = 3;
 const int TILE_TOP = 4;
 const int TILE_TOPRIGHT = 5;
 const int TILE_RIGHT = 6;
 const int TILE_BOTTOMRIGHT = 7;
 const int TILE_BOTTOM = 8;
 const int TILE_BOTTOMLEFT = 9;
-const int TILE_LEFT = 10; //writings
+const int TILE_WRITINGS = 10;
 const int TILE_TOPLEFT = 11;
 
 //The surfaces
@@ -74,7 +74,7 @@ class Tile
 
     //Get the tile type
     int get_type();
-    void change_type(int);
+    void set_type(int new_type);
 
     //Get the collision box
     SDL_Rect get_box();
@@ -299,30 +299,30 @@ void clean_up( Tile *tiles[] )
 void clip_tiles()
 {
     //Clip the sprite sheet
-    clips[ TILE_RED ].x = 0;
-    clips[ TILE_RED ].y = 0;
-    clips[ TILE_RED ].w = TILE_WIDTH;
-    clips[ TILE_RED ].h = TILE_HEIGHT;
+    clips[ TILE_UNVISITED ].x = 0;
+    clips[ TILE_UNVISITED ].y = 0;
+    clips[ TILE_UNVISITED ].w = TILE_WIDTH;
+    clips[ TILE_UNVISITED ].h = TILE_HEIGHT;
 
-    clips[ TILE_GREEN ].x = 0;
-    clips[ TILE_GREEN ].y = 40;
-    clips[ TILE_GREEN ].w = TILE_WIDTH;
-    clips[ TILE_GREEN ].h = TILE_HEIGHT;
+    clips[ TILE_VISITED ].x = 0;
+    clips[ TILE_VISITED ].y = 40;
+    clips[ TILE_VISITED ].w = TILE_WIDTH;
+    clips[ TILE_VISITED ].h = TILE_HEIGHT;
 
-    clips[ TILE_BLUE ].x = 0;
-    clips[ TILE_BLUE ].y = 80;
-    clips[ TILE_BLUE ].w = TILE_WIDTH;
-    clips[ TILE_BLUE ].h = TILE_HEIGHT;
+    clips[ TILE_TREASURE ].x = 0;
+    clips[ TILE_TREASURE ].y = 80;
+    clips[ TILE_TREASURE ].w = TILE_WIDTH;
+    clips[ TILE_TREASURE ].h = TILE_HEIGHT;
 
     clips[ TILE_TOPLEFT ].x = 40;
     clips[ TILE_TOPLEFT ].y = 0;
     clips[ TILE_TOPLEFT ].w = TILE_WIDTH;
     clips[ TILE_TOPLEFT ].h = TILE_HEIGHT;
 
-    clips[ TILE_LEFT ].x = 40;
-    clips[ TILE_LEFT ].y = 40;
-    clips[ TILE_LEFT ].w = TILE_WIDTH;
-    clips[ TILE_LEFT ].h = TILE_HEIGHT;
+    clips[ TILE_WRITINGS ].x = 40;
+    clips[ TILE_WRITINGS ].y = 40;
+    clips[ TILE_WRITINGS ].w = TILE_WIDTH;
+    clips[ TILE_WRITINGS ].h = TILE_HEIGHT;
 
     clips[ TILE_BOTTOMLEFT ].x = 40;
     clips[ TILE_BOTTOMLEFT ].y = 80;
@@ -334,10 +334,10 @@ void clip_tiles()
     clips[ TILE_TOP ].w = TILE_WIDTH;
     clips[ TILE_TOP ].h = TILE_HEIGHT;
 
-    clips[ TILE_CENTER ].x = 80;
-    clips[ TILE_CENTER ].y = 40;
-    clips[ TILE_CENTER ].w = TILE_WIDTH;
-    clips[ TILE_CENTER ].h = TILE_HEIGHT;
+    clips[ TILE_WALL ].x = 80;
+    clips[ TILE_WALL ].y = 40;
+    clips[ TILE_WALL ].w = TILE_WIDTH;
+    clips[ TILE_WALL ].h = TILE_HEIGHT;
 
     clips[ TILE_BOTTOM ].x = 80;
     clips[ TILE_BOTTOM ].y = 80;
@@ -475,20 +475,9 @@ int Tile::get_type()
 {
     return type;
 }
-void Tile::change_type(int option)
+void Tile::set_type(int new_type)
 {
-    if(option==2) //visit
-    {
-        this->type= 1;
-    }
-    if(option==0) //write sth
-    {
-        this->type = 10;
-    }
-    if(option==1) //write nothing
-    {
-        this->type=1;
-    }
+    type = new_type;
 }
 
 SDL_Rect Tile::get_box()

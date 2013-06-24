@@ -147,18 +147,21 @@ int main( int argc, char* args[] )
                 writings[dots[tura].yTile-1][dots[tura].xTile-1] = decision.second;
             }
 
-            int help=tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->get_type();
+            int current_tile_type=tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->get_type();
 
-            if (decision.first>0 && (help==0 || help==2))
-                decision.first=2;
-            if (decision.first==0 && decision.second == "")
-                decision.first=1;
-
-            tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->change_type(decision.first);
-
-
-
-
+            if (decision.first>0)
+            {
+                if(current_tile_type==TILE_UNVISITED || current_tile_type==TILE_TREASURE)
+                    tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->set_type(TILE_VISITED);
+            }
+            else if (decision.first==0 && decision.second == "")
+            {
+                tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->set_type(TILE_VISITED);
+            }
+            else if (decision.first==0 && decision.second != "")
+            {
+                tiles[ (dots[tura].yTile-1) * LEVEL_W + dots[tura].xTile-1 ]->set_type(TILE_WRITINGS);
+            }
         }
         ++tura;
 
