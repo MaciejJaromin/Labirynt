@@ -12,14 +12,16 @@
 #include "agents_maciej.h"
 #include "agents_piotr.h"
 #include "gather_team.h"
+#include <cassert>
 
 using namespace std;
 
-//storing "floor writing"
-std::string writings[LEVEL_W][LEVEL_H];
-
-int main( int argc, char* args[] )
+void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_interval_in_steps=5)
 {
+    int steps = 0;
+
+    //storing "floor writing"
+    std::string writings[LEVEL_W][LEVEL_H];
 
     agents *agenci[AGENTS_AMOUNT];
 
@@ -41,7 +43,7 @@ int main( int argc, char* args[] )
     //which agent moves now?
     int tura=0;
 
-    gather_team(agenci, 3);
+    gather_team(agenci, team);
 
     pair<int, std::string> decision;
 
@@ -61,13 +63,13 @@ int main( int argc, char* args[] )
     //Initialize
     if( init() == false )
     {
-        return 1;
+        assert(false);
     }
 
     //Load the files
     if( load_files() == false )
     {
-        return 1;
+        assert(false);
     }
 
     //Clip the tile sheet
@@ -76,7 +78,7 @@ int main( int argc, char* args[] )
     //Set the tiles
     if( set_tiles( tiles ) == false )
     {
-        return 1;
+        assert(false);
     }
 
     //While the user hasn't quit
@@ -197,18 +199,57 @@ int main( int argc, char* args[] )
         //Update the screen
         if( SDL_Flip( screen ) == -1 )
         {
-            return 1;
+            assert(false);
         }
 
         //Cap the frame rate
-        if( fps.get_ticks() < 1000 / FRAMES_PER_SECOND )
+        if(!fast)
         {
-            SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.get_ticks() );
+            if( fps.get_ticks() < 1000 / FRAMES_PER_SECOND )
+            {
+                SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.get_ticks() );
+            }
+        }
+
+        if(tura==0)
+        {
+            ++steps;
+            if(steps>=steps_limit)
+                break;
+            // Logging
+            if(tura%logging_interval_in_steps==0)
+            {
+                int visited_tiles = 0;
+                int visitable_tiles = 0;
+                for(int i=0;i<TOTAL_TILES;++i)
+                {
+                    if(tiles[i]->get_type()==TILE_VISITED || tiles[i]->get_type()==TILE_WRITINGS)
+                    {
+                        ++visited_tiles;
+                        ++visitable_tiles;
+                    }
+                    else if(tiles[i]->get_type()==TILE_UNVISITED)
+                        ++visitable_tiles;
+                }
+                double percent_visited = double(visited_tiles)/visitable_tiles;
+                log << team << ";" << visited_tiles << ";" << visitable_tiles << ";" << percent_visited  << endl;
+            }
         }
     }
 
     //Clean up
     clean_up( tiles );
 
+}
+
+
+
+int main( int argc, char* args[] )
+{
+     //ostream& log = cout;
+    ofstream log("log.txt",ios::out | ios::app);
+    play_game(3,true,100000,log);
+    //for(int i=0;i<4;++i)
+        //play_game(i,true,300,log);
     return 0;
 }
