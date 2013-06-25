@@ -24,22 +24,23 @@ std::pair<int, std::string> blind_walker::move(int items[3][3], int mates[20], s
     }
     // Do the logic, make decision
     int final_decision=0;
-    bool can_go_left = rotated_items.get(1,0) != M_WALL;
-    bool can_go_right = rotated_items.get(1,2) != M_WALL;
-    bool can_go_straight = rotated_items.get(0,1) != M_WALL;
+
     {
-        int options[3];
-        int i=0;
+        std::vector<int> options;
+        bool can_go_left = rotated_items.get(1,0) != M_WALL;
+        bool can_go_right = rotated_items.get(1,2) != M_WALL;
+        bool can_go_straight = rotated_items.get(0,1) != M_WALL;
         if(can_go_left)
-            options[i++] = 3;
+            options.push_back(3);
         if(can_go_right)
-            options[i++] = 4;
+            options.push_back(4);
         if(can_go_straight)
-            options[i++] = 1;
-        if(i==0)
+            options.push_back(1);
+
+        if(options.size()==0)
             final_decision = 2;//turn back
         else
-            final_decision = strategy.choose(options,i);
+            final_decision = strategy.choose(options,rotated_items);
     }
 
     //Revert to proper reference frame
@@ -112,24 +113,24 @@ std::pair<int, std::string> sealing_walker::move(int items[3][3], int mates[20],
     }
     // Do the logic, make decision
     int final_decision = 0;
-    bool can_go_left     = rotated_items.get(1,0) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(3,clockwise_rotation));
-    bool can_go_right    = rotated_items.get(1,2) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(4,clockwise_rotation));
-    bool can_go_straight = rotated_items.get(0,1) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(1,clockwise_rotation));
     {
-        int options[3];
-        int i=0;
+        std::vector<int> options;
+        bool can_go_left     = rotated_items.get(1,0) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(3,clockwise_rotation));
+        bool can_go_right    = rotated_items.get(1,2) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(4,clockwise_rotation));
+        bool can_go_straight = rotated_items.get(0,1) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(1,clockwise_rotation));
         if(can_go_left)
-            options[i++] = 3;
+            options.push_back(3);
         if(can_go_right)
-            options[i++] = 4;
+            options.push_back(4);
         if(can_go_straight)
-            options[i++] = 1;
-        if(i==0)
+            options.push_back(1);
+
+        if(options.size()==0)
         {
             final_decision = 2;//turn back
             dead_end = true;
         }
-        else if(i==1)
+        else if(options.size()==1)
         {
             final_decision = options[0];
         }
@@ -140,7 +141,7 @@ std::pair<int, std::string> sealing_walker::move(int items[3][3], int mates[20],
                 writing = append_dead_end_sign(reading[1][1], rotate_direction_counterclockwise(2,clockwise_rotation));
                 dead_end = false;
             }
-            final_decision = strategy.choose(options,i);
+            final_decision = strategy.choose(options,rotated_items);
         }
     }
 

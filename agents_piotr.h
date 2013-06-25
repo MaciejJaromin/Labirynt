@@ -2,46 +2,76 @@
 #define AGENTS_PIOTR_H_INCLUDED
 
 #include <string>
+#include <vector>
 #include <cassert>
 #include "bullerbyn.h"
+#include "agents_common_tools.h"
 
 #define M_WALL 3
 
 class Choice_strategy
 {
 protected:
-    bool contains(int options[3], int options_len, int value)
+    bool contains(std::vector<int> options, int value)
     {
-        for(int i=0;i<options_len;++i)
+        for(unsigned int i=0;i<options.size();++i)
             if(options[i]==value)
                 return true;
         return false;
     }
 public:
-    virtual int choose(int options[3], int i) = 0;
+    virtual int choose(std::vector<int> options, rotated_view_of_square_matrix<int,3>& items) = 0;
 };
+
+class Explorer : public Choice_strategy
+{
+    Choice_strategy& strategy;
+public:
+    Explorer(Choice_strategy& strategy):strategy(strategy)
+    {}
+    virtual int choose(std::vector<int> options, rotated_view_of_square_matrix<int,3>& items)
+    {
+        std::vector<int> filtered_options;
+        for(unsigned int i=0;i<options.size();++i)
+        {
+            const int TILE_UNVISITED = 0;//fixme
+            if( (options[i]==1 && items.get(0,1)==TILE_UNVISITED) ||
+                (options[i]==3 && items.get(1,0)==TILE_UNVISITED) ||
+                (options[i]==4 && items.get(1,2)==TILE_UNVISITED)  )
+                    filtered_options.push_back(options[i]);
+        }
+        if(filtered_options.size()==0)
+            return strategy.choose(options,items);
+        else
+            return strategy.choose(filtered_options,items);
+    }
+};
+
 class Random_choice : public Choice_strategy
 {
 public:
     Random_choice()
     {
-        srand(time(NULL));
+        srand(time(NULL));//just in case
     }
-    virtual int choose(int options[3], int i)
+    virtual int choose(std::vector<int> options, rotated_view_of_square_matrix<int,3>& items)
     {
-        return options[rand()%i];
+        if(options.size()==0)
+            return 2;//turn back
+        else
+            return options[rand()%options.size()];
     }
 };
 class Leftwall_choice : public Choice_strategy
 {
 public:
-    virtual int choose(int options[3], int options_len)
+    virtual int choose(std::vector<int> options, rotated_view_of_square_matrix<int,3>& items)
     {
-        if(contains(options,options_len,3))
+        if(contains(options,3))
             return 3;
-        if(contains(options,options_len,1))
+        if(contains(options,1))
             return 1;
-        if(contains(options,options_len,4))
+        if(contains(options,4))
             return 4;
         assert(false);
     }
@@ -50,13 +80,13 @@ public:
 class Rightwall_choice : public Choice_strategy
 {
 public:
-    virtual int choose(int options[3], int options_len)
+    virtual int choose(std::vector<int> options, rotated_view_of_square_matrix<int,3>& items)
     {
-        if(contains(options,options_len,4))
+        if(contains(options,4))
             return 4;
-        if(contains(options,options_len,1))
+        if(contains(options,1))
             return 1;
-        if(contains(options,options_len,3))
+        if(contains(options,3))
             return 3;
         assert(false);
     }
