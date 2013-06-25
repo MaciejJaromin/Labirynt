@@ -152,7 +152,6 @@ std::pair<int, std::string> sealing_walker::move(int items[3][3], int mates[20],
     direction = final_decision;
     if(writing!="")
         final_decision = 0;
-    std::cout << id << "-" << dead_end << ":" << writing << "=" << reading[1][1] << std::endl;
     return std::make_pair<int,std::string>(final_decision,writing);
 }
 

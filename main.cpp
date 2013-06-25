@@ -21,7 +21,7 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
     int steps = 0;
 
     //storing "floor writing"
-    std::string writings[LEVEL_W][LEVEL_H];
+    std::string writings[LEVEL_H][LEVEL_W];
 
     agents *agenci[AGENTS_AMOUNT];
 
@@ -80,6 +80,45 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
     {
         assert(false);
     }
+
+    // Piotrek graphics
+    class Piotrek_writings
+    {
+        SDL_Surface* arrows_image;
+    public:
+        Piotrek_writings()
+        {
+            arrows_image = load_image( "arrows.png" );
+        }
+        void draw(std::string (&writings)[LEVEL_H][LEVEL_W])
+        {
+            SDL_Rect right_arrow = { 0, 0,40,40};
+            SDL_Rect down_arrow  = {40, 0,40,40};
+            SDL_Rect left_arrow  = { 0,40,40,40};
+            SDL_Rect up_arrow    = {40,40,40,40};
+
+            for(int x=0;x<LEVEL_W;++x)
+                for(int y=0;y<LEVEL_H;++y)
+                {
+                    if(writings[y][x]!=std::string(""))
+                    {
+                        if(writings[y][x].length()>=5)
+                        {
+                            int current_x = (x+1)*TILE_HEIGHT-camera.y;
+                            int current_y = (y-1)*TILE_WIDTH-camera.x;
+                            if(writings[y][x][1]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &up_arrow);
+                            if(writings[y][x][2]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &down_arrow);
+                            if(writings[y][x][3]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &left_arrow);
+                            if(writings[y][x][4]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &right_arrow);
+                        }
+                    }
+                }
+        }
+    } piotrek_writings;
 
     //While the user hasn't quit
     while( quit == false )
@@ -194,7 +233,9 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
         {
             dots[i].show();
         }
-
+        // Show additional graphical information for Piotrek's agents
+        if(team==3 || team==4 || team==5)
+            piotrek_writings.draw(writings);
 
         //Update the screen
         if( SDL_Flip( screen ) == -1 )
@@ -241,8 +282,6 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
     clean_up( tiles );
 
 }
-
-
 
 int main( int argc, char* args[] )
 {
