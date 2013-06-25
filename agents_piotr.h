@@ -67,8 +67,20 @@ class Leftwall_choice : public Choice_strategy
 public:
     virtual int choose(std::vector<int> options, rotated_view_of_square_matrix<int,3>& items)
     {
-        if(contains(options,3))
-            return 3;
+        if(contains(options,3)) // This part is more complex to avoid going in circles while using this strategy with Explorer strategy
+        {
+            const int TILE_WALL = 3;//fixme
+
+            if( items.get(2,0)!=TILE_WALL )// if we lost the wall we were following
+            {
+                if( items.get(0,1)!=TILE_WALL )// if we don't have the wall in front of us
+                    return 1;// then go straight to avoid going in circles forever
+                else
+                    return 4;// when no wall on the left, but we hit a wall in front of us then follow right
+            }
+            else
+                return 3;
+        }
         if(contains(options,1))
             return 1;
         if(contains(options,4))
@@ -82,8 +94,20 @@ class Rightwall_choice : public Choice_strategy
 public:
     virtual int choose(std::vector<int> options, rotated_view_of_square_matrix<int,3>& items)
     {
-        if(contains(options,4))
-            return 4;
+        if(contains(options,4)) // This part is more complex to avoid going in circles while using this strategy with Explorer strategy
+        {
+            const int TILE_WALL = 3;//fixme
+
+            if( items.get(2,2)!=TILE_WALL )// if we lost the wall we were following
+            {
+                if( items.get(0,1)!=TILE_WALL )// if we don't have the wall in front of us
+                    return 1;// then go straight to avoid going in circles forever
+                else
+                    return 3;// when no wall on the left, but we hit a wall in front of us then follow right
+            }
+            else
+                return 4;
+        }
         if(contains(options,1))
             return 1;
         if(contains(options,3))
