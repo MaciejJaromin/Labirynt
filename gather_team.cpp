@@ -16,14 +16,21 @@ void gather_team(agents *agenci[AGENTS_AMOUNT], int option)
     }
     else if (option == 2)
     {
-        agenci[0] = new random_walker;
-        agenci[1] = new random_walker;
-
+        Random_choice* random = new Random_choice();
+        agenci[0] = new blind_walker(*random);
+        agenci[1] = new blind_walker(*random);
     }
-      else if (option == 3)
+    else if (option == 3)
     {
-        agenci[0] = new sealing_random_walker(0);
-        agenci[1] = new sealing_random_walker(1);
-
+        Random_choice* random = new Random_choice();
+        agenci[0] = new sealing_walker(0,*random);
+        agenci[1] = new sealing_walker(1,*random);
+    }
+    else if (option == 4)
+    {
+        Leftwall_choice* leftwall = new Leftwall_choice();
+        agenci[0] = new sealing_walker(0,*leftwall);
+        Rightwall_choice* rightwall = new Rightwall_choice();
+        agenci[1] = new sealing_walker(1,*rightwall);
     }
 }
