@@ -241,7 +241,7 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
             dots[i].show();
         }
         // Show additional graphical information for Piotrek's agents
-        if(team==3 || team==4 || team==5)
+        if(team>=3 && team<=10)
             piotrek_writings.draw(writings);
 
         //Update the screen
@@ -297,10 +297,7 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
 
 int main( int argc, char* args[] )
 {
-     //ostream& log = cout;
     ofstream log("log.txt",ios::out | ios::app);
-    play_game(3,true,100000,log);
-    //for(int i=0;i<4;++i)
-        //play_game(i,true,300,log);
+    play_game(10,true,10000,log);
     return 0;
 }
