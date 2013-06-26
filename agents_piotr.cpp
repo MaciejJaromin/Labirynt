@@ -1,5 +1,6 @@
 #include "agents_piotr.h"
 #include "agents_common_tools.h"
+#include <time.h>
 
 random_walker::random_walker()
 {

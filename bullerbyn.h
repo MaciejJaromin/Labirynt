@@ -21,6 +21,7 @@ class agents
     //Changed to protected so that classes inheriting from agents can access the data - Maciej
     int  data_int[5];
     char data_char[3][40];
+    std::string data_string[3]; //replacing the char array agent data with strings, keeping the char arrays for backwards compatibility
 
     int id;
 

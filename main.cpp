@@ -41,7 +41,7 @@ int main( int argc, char* args[] )
     //which agent moves now?
     int tura=0;
 
-    gather_team(agenci, 3);
+    gather_team(agenci, 1);
 
     pair<int, std::string> decision;
 

@@ -4,6 +4,8 @@
 
 
 #include "bullerbyn.h"
+#include <sstream>
+#include <deque>
 
 #define M_WALL 3
 
@@ -40,6 +42,11 @@ public:
     std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]);
 };
 
+    struct message
+    {
+        int to, from, id;
+    };
+
 class writer : public maciej_base
 {
 public:
@@ -48,6 +55,13 @@ public:
 
 
     std::pair<int, std::string> move(int items[3][3],int mates[20],std::string reading[3][3]);
+
+private:
+
+
+    std::vector<message> parse(std::string m);
+    std::string append(std::string orig, message m);
+
 };
 
 #endif // AGENTS_MACIEJ_H_INCLUDED
