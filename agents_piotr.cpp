@@ -4,7 +4,6 @@
 blind_walker::blind_walker(Choice_strategy& strategy):strategy(strategy)
 {
     data_int[0] = 1;
-    srand(time(NULL));
 }
 
 std::pair<int, std::string> blind_walker::move(int items[3][3], int mates[20], std::string reading[3][3])
@@ -55,7 +54,6 @@ sealing_walker::sealing_walker(int id, Choice_strategy& strategy):agents(id),str
 {
     data_int[0] = 1;
     data_int[1] = false;
-    srand(time(NULL));
 }
 
 bool is_dead_end_sign(std::string reading)

@@ -81,6 +81,13 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
         assert(false);
     }
 
+    int total_treasures = 0;
+    for( int t = 0; t < TOTAL_TILES; t++ )
+    {
+        if(tiles[t]->get_type()==TILE_TREASURE)
+            ++total_treasures;
+    }
+
     // Piotrek graphics
     class Piotrek_writings
     {
@@ -262,6 +269,7 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
             {
                 int visited_tiles = 0;
                 int visitable_tiles = 0;
+                int treasures_left = 0;
                 for(int i=0;i<TOTAL_TILES;++i)
                 {
                     if(tiles[i]->get_type()==TILE_VISITED || tiles[i]->get_type()==TILE_WRITINGS)
@@ -269,11 +277,15 @@ void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_
                         ++visited_tiles;
                         ++visitable_tiles;
                     }
-                    else if(tiles[i]->get_type()==TILE_UNVISITED)
+                    else if(tiles[i]->get_type()==TILE_UNVISITED || tiles[i]->get_type()==TILE_TREASURE)
                         ++visitable_tiles;
+
+                    if(tiles[i]->get_type()==TILE_TREASURE)
+                        ++treasures_left;
                 }
                 double percent_visited = double(visited_tiles)/visitable_tiles;
-                log << team << ";" << visited_tiles << ";" << visitable_tiles << ";" << percent_visited  << endl;
+                log << team << ";" << visited_tiles << ";" << visitable_tiles << ";" << percent_visited << ";"
+                    << (total_treasures-treasures_left) << ";" << total_treasures << endl;
             }
         }
     }

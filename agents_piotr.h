@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <cassert>
+#include <ctime>
 #include "bullerbyn.h"
 #include "agents_common_tools.h"
 
@@ -35,9 +36,10 @@ public:
         for(unsigned int i=0;i<options.size();++i)
         {
             const int TILE_UNVISITED = 0;//fixme
-            if( (options[i]==1 && items.get(0,1)==TILE_UNVISITED) ||
-                (options[i]==3 && items.get(1,0)==TILE_UNVISITED) ||
-                (options[i]==4 && items.get(1,2)==TILE_UNVISITED)  )
+            const int TILE_TREASURE = 2;//fixme
+            if( (options[i]==1 && (items.get(0,1)==TILE_UNVISITED || items.get(0,1)==TILE_TREASURE)) ||
+                (options[i]==3 && (items.get(1,0)==TILE_UNVISITED || items.get(1,0)==TILE_TREASURE)) ||
+                (options[i]==4 && (items.get(1,2)==TILE_UNVISITED || items.get(1,2)==TILE_TREASURE))  )
                     filtered_options.push_back(options[i]);
         }
         if(filtered_options.size()==0)
