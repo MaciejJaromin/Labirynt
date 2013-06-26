@@ -2,13 +2,12 @@
 #include "agents_common_tools.h"
 #include <time.h>
 
-random_walker::random_walker()
+blind_walker::blind_walker(Choice_strategy& strategy):strategy(strategy)
 {
     data_int[0] = 1;
-    srand(time(NULL));
 }
 
-std::pair<int, std::string> random_walker::move(int items[3][3], int mates[20], std::string reading[3][3])
+std::pair<int, std::string> blind_walker::move(int items[3][3], int mates[20], std::string reading[3][3])
 {
     int direction = data_int[0]; //load the last choice made
 
@@ -25,22 +24,23 @@ std::pair<int, std::string> random_walker::move(int items[3][3], int mates[20], 
     }
     // Do the logic, make decision
     int final_decision=0;
-    bool can_go_left = rotated_items.get(1,0) != M_WALL;
-    bool can_go_right = rotated_items.get(1,2) != M_WALL;
-    bool can_go_straight = rotated_items.get(0,1) != M_WALL;
+
     {
-        int options[3];
-        int i=0;
+        std::vector<int> options;
+        bool can_go_left = rotated_items.get(1,0) != M_WALL;
+        bool can_go_right = rotated_items.get(1,2) != M_WALL;
+        bool can_go_straight = rotated_items.get(0,1) != M_WALL;
         if(can_go_left)
-            options[i++] = 3;
+            options.push_back(3);
         if(can_go_right)
-            options[i++] = 4;
+            options.push_back(4);
         if(can_go_straight)
-            options[i++] = 1;
-        if(i==0)
+            options.push_back(1);
+
+        if(options.size()==0)
             final_decision = 2;//turn back
         else
-            final_decision = options[rand()%i];
+            final_decision = strategy.choose(options,rotated_items);
     }
 
     //Revert to proper reference frame
@@ -51,11 +51,10 @@ std::pair<int, std::string> random_walker::move(int items[3][3], int mates[20], 
     return std::make_pair<int,std::string>(final_decision,"");
 }
 
-sealing_random_walker::sealing_random_walker(int id):agents(id)
+sealing_walker::sealing_walker(int id, Choice_strategy& strategy):agents(id),strategy(strategy)
 {
     data_int[0] = 1;
     data_int[1] = false;
-    srand(time(NULL));
 }
 
 bool is_dead_end_sign(std::string reading)
@@ -94,7 +93,7 @@ std::string append_dead_end_sign(std::string reading, int direction)
     }
 }
 
-std::pair<int, std::string> sealing_random_walker::move(int items[3][3], int mates[20], std::string reading[3][3])
+std::pair<int, std::string> sealing_walker::move(int items[3][3], int mates[20], std::string reading[3][3])
 {
     int& direction = data_int[0];
     int& dead_end = data_int[1];
@@ -113,24 +112,24 @@ std::pair<int, std::string> sealing_random_walker::move(int items[3][3], int mat
     }
     // Do the logic, make decision
     int final_decision = 0;
-    bool can_go_left     = rotated_items.get(1,0) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(3,clockwise_rotation));
-    bool can_go_right    = rotated_items.get(1,2) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(4,clockwise_rotation));
-    bool can_go_straight = rotated_items.get(0,1) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(1,clockwise_rotation));
     {
-        int options[3];
-        int i=0;
+        std::vector<int> options;
+        bool can_go_left     = rotated_items.get(1,0) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(3,clockwise_rotation));
+        bool can_go_right    = rotated_items.get(1,2) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(4,clockwise_rotation));
+        bool can_go_straight = rotated_items.get(0,1) != M_WALL && !is_dead_end(reading[1][1],rotate_direction_counterclockwise(1,clockwise_rotation));
         if(can_go_left)
-            options[i++] = 3;
+            options.push_back(3);
         if(can_go_right)
-            options[i++] = 4;
+            options.push_back(4);
         if(can_go_straight)
-            options[i++] = 1;
-        if(i==0)
+            options.push_back(1);
+
+        if(options.size()==0)
         {
             final_decision = 2;//turn back
             dead_end = true;
         }
-        else if(i==1)
+        else if(options.size()==1)
         {
             final_decision = options[0];
         }
@@ -141,7 +140,7 @@ std::pair<int, std::string> sealing_random_walker::move(int items[3][3], int mat
                 writing = append_dead_end_sign(reading[1][1], rotate_direction_counterclockwise(2,clockwise_rotation));
                 dead_end = false;
             }
-            final_decision = options[rand()%i];
+            final_decision = strategy.choose(options,rotated_items);
         }
     }
 
@@ -152,55 +151,6 @@ std::pair<int, std::string> sealing_random_walker::move(int items[3][3], int mat
     direction = final_decision;
     if(writing!="")
         final_decision = 0;
-    std::cout << id << "-" << dead_end << ":" << writing << "=" << reading[1][1] << std::endl;
     return std::make_pair<int,std::string>(final_decision,writing);
-}
-
-refactored_solo_leftwall::refactored_solo_leftwall()
-{
-    data_int[0] = 1;
-    srand(time(NULL));
-}
-std::pair<int, std::string> refactored_solo_leftwall::move(int items[3][3], int mates[20], std::string reading[3][3])
-{
-    int direction = data_int[0]; //load the last choice made
-
-    // Set up a reference frame (such that we are facing north)
-    rotated_view_of_square_matrix<int,3> rotated_items(items);
-    rotated_view_of_square_matrix<std::string,3> rotated_reading(reading);
-    int clockwise_rotation=0;
-    while(direction!=1)
-    {
-        direction = rotate_direction_clockwise(direction);
-        rotated_items.rotate_clockwise();
-        rotated_reading.rotate_clockwise();
-        ++clockwise_rotation;
-    }
-    // Do the logic, make decision
-    int final_decision=0;
-    if (rotated_items.get(1,0) != M_WALL && rotated_items.get(2,0) == M_WALL)
-    {
-        final_decision = 3;
-    }
-    else if (rotated_items.get(0,1) != M_WALL)
-    {
-        final_decision = 1;
-    }
-    else if (rotated_items.get(1,2) != M_WALL)
-    {
-        final_decision = 4;
-    }
-    else
-    {
-        final_decision = 2;
-    }
-    //Revert to proper reference frame
-    for(int i=0;i<clockwise_rotation;++i)
-        final_decision = rotate_direction_counterclockwise(final_decision);
-
-    //
-    data_int[0] = final_decision;
-    return std::make_pair<int,std::string>(final_decision,"");
-
 }
 

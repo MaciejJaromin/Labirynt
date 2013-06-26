@@ -12,14 +12,16 @@
 #include "agents_maciej.h"
 #include "agents_piotr.h"
 #include "gather_team.h"
+#include <cassert>
 
 using namespace std;
 
-//storing "floor writing"
-std::string writings[LEVEL_W][LEVEL_H];
-
-int main( int argc, char* args[] )
+void play_game(int team, bool fast, int steps_limit, ofstream& log, int logging_interval_in_steps=5)
 {
+    int steps = 0;
+
+    //storing "floor writing"
+    std::string writings[LEVEL_H][LEVEL_W];
 
     agents *agenci[AGENTS_AMOUNT];
 
@@ -41,7 +43,7 @@ int main( int argc, char* args[] )
     //which agent moves now?
     int tura=0;
 
-    gather_team(agenci, 1);
+    gather_team(agenci, team);
 
     pair<int, std::string> decision;
 
@@ -61,13 +63,13 @@ int main( int argc, char* args[] )
     //Initialize
     if( init() == false )
     {
-        return 1;
+        assert(false);
     }
 
     //Load the files
     if( load_files() == false )
     {
-        return 1;
+        assert(false);
     }
 
     //Clip the tile sheet
@@ -76,8 +78,54 @@ int main( int argc, char* args[] )
     //Set the tiles
     if( set_tiles( tiles ) == false )
     {
-        return 1;
+        assert(false);
     }
+
+    int total_treasures = 0;
+    for( int t = 0; t < TOTAL_TILES; t++ )
+    {
+        if(tiles[t]->get_type()==TILE_TREASURE)
+            ++total_treasures;
+    }
+
+    // Piotrek graphics
+    class Piotrek_writings
+    {
+        SDL_Surface* arrows_image;
+    public:
+        Piotrek_writings()
+        {
+            arrows_image = load_image( "arrows.png" );
+        }
+        void draw(std::string (&writings)[LEVEL_H][LEVEL_W])
+        {
+            SDL_Rect right_arrow = { 0, 0,40,40};
+            SDL_Rect down_arrow  = {40, 0,40,40};
+            SDL_Rect left_arrow  = { 0,40,40,40};
+            SDL_Rect up_arrow    = {40,40,40,40};
+
+            for(int x=0;x<LEVEL_W;++x)
+                for(int y=0;y<LEVEL_H;++y)
+                {
+                    if(writings[y][x]!=std::string(""))
+                    {
+                        if(writings[y][x].length()>=5)
+                        {
+                            int current_x = (x+1)*TILE_HEIGHT-camera.y;
+                            int current_y = (y-1)*TILE_WIDTH-camera.x;
+                            if(writings[y][x][1]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &up_arrow);
+                            if(writings[y][x][2]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &down_arrow);
+                            if(writings[y][x][3]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &left_arrow);
+                            if(writings[y][x][4]=='1')
+                                apply_surface( current_x, current_y, arrows_image, screen, &right_arrow);
+                        }
+                    }
+                }
+        }
+    } piotrek_writings;
 
     //While the user hasn't quit
     while( quit == false )
@@ -192,23 +240,67 @@ int main( int argc, char* args[] )
         {
             dots[i].show();
         }
-
+        // Show additional graphical information for Piotrek's agents
+        if(team==3 || team==4 || team==5)
+            piotrek_writings.draw(writings);
 
         //Update the screen
         if( SDL_Flip( screen ) == -1 )
         {
-            return 1;
+            assert(false);
         }
 
         //Cap the frame rate
-        if( fps.get_ticks() < 1000 / FRAMES_PER_SECOND )
+        if(!fast)
         {
-            SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.get_ticks() );
+            if( fps.get_ticks() < 1000 / FRAMES_PER_SECOND )
+            {
+                SDL_Delay( ( 1000 / FRAMES_PER_SECOND ) - fps.get_ticks() );
+            }
+        }
+
+        if(tura==0)
+        {
+            ++steps;
+            if(steps>=steps_limit)
+                break;
+            // Logging
+            if(tura%logging_interval_in_steps==0)
+            {
+                int visited_tiles = 0;
+                int visitable_tiles = 0;
+                int treasures_left = 0;
+                for(int i=0;i<TOTAL_TILES;++i)
+                {
+                    if(tiles[i]->get_type()==TILE_VISITED || tiles[i]->get_type()==TILE_WRITINGS)
+                    {
+                        ++visited_tiles;
+                        ++visitable_tiles;
+                    }
+                    else if(tiles[i]->get_type()==TILE_UNVISITED || tiles[i]->get_type()==TILE_TREASURE)
+                        ++visitable_tiles;
+
+                    if(tiles[i]->get_type()==TILE_TREASURE)
+                        ++treasures_left;
+                }
+                double percent_visited = double(visited_tiles)/visitable_tiles;
+                log << team << ";" << visited_tiles << ";" << visitable_tiles << ";" << percent_visited << ";"
+                    << (total_treasures-treasures_left) << ";" << total_treasures << endl;
+            }
         }
     }
 
     //Clean up
     clean_up( tiles );
 
+}
+
+int main( int argc, char* args[] )
+{
+     //ostream& log = cout;
+    ofstream log("log.txt",ios::out | ios::app);
+    play_game(3,true,100000,log);
+    //for(int i=0;i<4;++i)
+        //play_game(i,true,300,log);
     return 0;
 }
